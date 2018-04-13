@@ -47,7 +47,7 @@ function getAll() {
         headers: authHeader()
     };
 
-    return fetch('/users', requestOptions).then(handleResponse);
+    return fetch('../json-data/summary.json', requestOptions).then(handleResponse);
 }
 
 function getById(id) {
@@ -76,10 +76,18 @@ function update(user) {
         body: JSON.stringify(user)
     };
 
-    return fetch('/users/' + user.id, requestOptions).then(handleResponse);;
+    return fetch('/users/' + user.id, requestOptions).then(handleResponse);
 }
 
-// prefixed function name with underscore because delete is a reserved word in javascript
+function getPlayersById(player_id){
+    const requestOptions = {
+        method: 'GET',
+        headers: authHeader()
+    };
+
+    return fetch('../json-data/chart.json' + player_id, requestOptions).then(handleResponse);
+}
+
 function _delete(id) {
     const requestOptions = {
         method: 'DELETE',

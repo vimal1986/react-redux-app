@@ -4,42 +4,63 @@ import { connect } from 'react-redux';
 
 import { userActions } from '../_actions';
 
+import { ChartPlayer } from '../_components/ChartPlayer';
+
 class HomePage extends React.Component {
+    constructor(){
+        super()
+        this.state={
+            currentPlayers: null
+        };
+    }
     componentDidMount() {
         this.props.dispatch(userActions.getAll());
     }
 
-    handleDeleteUser(id) {
+    handleDeletePlayer(id) {
         return (e) => this.props.dispatch(userActions.delete(id));
     }
 
+    handleClick(player_id) {
+        this.setState({ currentPlayers:this.props.dispatch(userActions.getPlayersById(player_id)) });       
+      }
+
     render() {
-        const { user, users } = this.props;
+        const { player, players } = this.props;
         return (
-            <div className="col-md-6 col-md-offset-3">
-                <h1>Hi {user.firstName}!</h1>
-                <p>You're logged in with React!!</p>
-                <h3>All registered users:</h3>
-                {users.loading && <em>Loading users...</em>}
-                {users.error && <span className="text-danger">ERROR: {users.error}</span>}
-                {users.items &&
-                    <ul>
-                        {users.items.map((user, index) =>
-                            <li key={user.id}>
-                                {user.firstName + ' ' + user.lastName}
-                                {
-                                    user.deleting ? <em> - Deleting...</em>
-                                    : user.deleteError ? <span className="text-danger"> - ERROR: {user.deleteError}</span>
-                                    : <span> - <a onClick={this.handleDeleteUser(user.id)}>Delete</a></span>
-                                }
-                            </li>
-                        )}
-                    </ul>
-                }
-                <p>
-                    <Link to="/login">Logout</Link>
-                </p>
+            <div className="container">
+            <div className="row">
+                <div className="col-md-3">
+                    <h1>Players List</h1>
+                    <p>You're logged in with React!!</p>
+                    <h3>All registered users:</h3>
+                </div>
+            </div>    
+                    {players.loading && <em>Loading users...</em>}
+                    {players.error && <span className="text-danger">ERROR: {players.error}</span>}
+                    {
+                        players.data &&
+                       <div className="row">
+                            {
+                                players.data.map((player, index) =>
+                                <div className="col-md-3" key={index} onClick={
+                                    () =>this.handleClick(player.player_id)}>
+                                    <div className="col-md-3">
+                                        <img className="img-fluid" src={player.player_portait} alt=""/>
+                                        <h2 className=" title-small"><a href="#">{player.player_name}</a></h2>
+                                        <p class="card-text"><small class="text-time"><em>{player.player_batting-styles}</em></small></p>
+                                    </div>                               
+                                </div>
+                                )
+                            }
+                      </div>                        
+                    }
+                    
+                    <ChartPlayer player={ this.state.currentPlayers }/>
+                    
             </div>
+            
+            
         );
     }
 }
